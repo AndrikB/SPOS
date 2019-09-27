@@ -78,6 +78,8 @@ void main() {
 	string userInput;	
 	int bytesReceived = recv(sock, buf, bufSize, 0);
 	cout << "func number " << string(buf, 0, bytesReceived) << endl;
+	int numberFunc = atoi(buf);//todo change func by numb
+
 	bytesReceived = recv(sock, buf, bufSize, 0);
 	if (bytesReceived > 0)
 	{

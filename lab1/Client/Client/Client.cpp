@@ -13,6 +13,10 @@
 
 using namespace std;
 
+
+
+const int bufSize = 256;
+
 SOCKET sock;
 
 void createClient() {
@@ -69,11 +73,11 @@ void closeClient() {
 void main() {
 	createClient();
 
-	char buf[4096];
-	ZeroMemory(buf, 4096);
+	char buf[bufSize];
+	ZeroMemory(buf, bufSize);
 	string userInput;
 
-	int bytesReceived = recv(sock, buf, 4096, 0);
+	int bytesReceived = recv(sock, buf, bufSize, 0);
 	if (bytesReceived > 0)
 	{
 		// Echo response to console
@@ -81,43 +85,12 @@ void main() {
 	}
 	int x = atoi(buf);
 
-	
-	const function<int(int)>& f = spos::f_func<spos::INT>;
-
-	int a = f(x);
-
-	ZeroMemory(buf, 4096);
+	int a = spos::f_func<spos::INT>(x);
+		
+	ZeroMemory(buf, bufSize);
 
 	itoa(a, buf, 10);
 
 	int sendResult = send(sock, buf, strlen(buf), 0);
-
-	system("pause");
-	exit(0);
-	do
-	{
-		// Prompt the user for some text
-		cout << "> ";
-		getline(cin, userInput);
-
-		if (userInput.size() > 0)		// Make sure the user has typed in something
-		{
-			// Send the text
-			int sendResult = send(sock, userInput.c_str(), userInput.size() + 1, 0);
-			if (sendResult != SOCKET_ERROR)
-			{
-				// Wait for response
-				ZeroMemory(buf, 4096);
-				int bytesReceived = recv(sock, buf, 4096, 0);
-				if (bytesReceived > 0)
-				{
-					// Echo response to console
-					cout << "SERVER> " << string(buf, 0, bytesReceived) << endl;
-				}
-			}
-		}
-
-	} while (userInput.size() > 0);
-
-	closeClient();
+	closeClient();	
 }

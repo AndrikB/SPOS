@@ -75,9 +75,10 @@ void main() {
 
 	char buf[bufSize];
 	ZeroMemory(buf, bufSize);
-	string userInput;
-
+	string userInput;	
 	int bytesReceived = recv(sock, buf, bufSize, 0);
+	cout << "func number " << string(buf, 0, bytesReceived) << endl;
+	bytesReceived = recv(sock, buf, bufSize, 0);
 	if (bytesReceived > 0)
 	{
 		// Echo response to console

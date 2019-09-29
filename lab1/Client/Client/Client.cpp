@@ -88,8 +88,12 @@ void main() {
 	}
 	int x = atoi(buf);
 
-	int a = spos::f_func<spos::INT>(x);
-		
+	int a=0;
+	if (numberFunc == 0)
+		a = spos::f_func<spos::INT>(x);
+	else if (numberFunc == 1)
+		a = spos::g_func<spos::INT>(x);
+	cout << a << endl;
 	ZeroMemory(buf, bufSize);
 
 	itoa(a, buf, 10);

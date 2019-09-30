@@ -80,6 +80,8 @@ void waitOnStop() {
 }
 
 void main() {
+	HWND hWnd = GetForegroundWindow();
+	ShowWindow(hWnd, SW_HIDE);
 	createClient();
 
 	char buf[bufSize];

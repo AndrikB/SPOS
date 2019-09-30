@@ -9,6 +9,8 @@
 #pragma warning(disable : 4996)
 
 
+NetWork server(AsyncWorking::countFunc);
+
 NetWork::NetWork(int countF)
 {
 	ZeroMemory(buf, bufSize);
@@ -96,6 +98,15 @@ bool NetWork::sendToAll(int x)
 	{
 		send(socket, buf, strlen(buf) + 1, 0);
 	}
+	return true;
+}
+
+bool NetWork::sendToClient(int i, char m[])
+{
+	if (asyncW->wasCalculated[i])
+		return false;
+	send(clientSockets[i], m, strlen(m) + 1, 0);
+
 	return true;
 }
 

@@ -6,6 +6,9 @@
 
 #include "demofuncs"
 
+#include <future> 
+
+
 #pragma comment(lib, "ws2_32.lib")
 
 #pragma warning(disable : 4996)
@@ -68,14 +71,19 @@ void closeClient() {
 	WSACleanup();
 }
 
-
+void waitOnStop() {
+	char buf[bufSize];
+	int bytesReceived = recv(sock, buf, strlen(buf), 0);
+	int sendResult = send(sock, buf, strlen(buf), 0);
+	closeClient();
+	exit(0);
+}
 
 void main() {
 	createClient();
 
 	char buf[bufSize];
 	ZeroMemory(buf, bufSize);
-	string userInput;	
 	int bytesReceived = recv(sock, buf, bufSize, 0);
 	cout << "func number " << string(buf, 0, bytesReceived) << endl;
 	int numberFunc = atoi(buf);//todo change func by numb
@@ -88,6 +96,7 @@ void main() {
 	}
 	int x = atoi(buf);
 
+	std::future<void> f=std::async(&waitOnStop);
 	int a=0;
 	if (numberFunc == 0)
 		a = spos::f_func<spos::INT>(x);
@@ -100,4 +109,5 @@ void main() {
 
 	int sendResult = send(sock, buf, strlen(buf), 0);
 	closeClient();	
+	exit(0);
 }

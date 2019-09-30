@@ -15,6 +15,8 @@ public:
 
 	bool sendToAll(int);
 
+	bool sendToClient(int, char[]);
+
 	bool closeServer();
 
 	void getAnswer(int index);
@@ -26,3 +28,4 @@ private:
 	std::vector<SOCKET> clientSockets;
 };
 
+extern NetWork server;

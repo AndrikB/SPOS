@@ -7,7 +7,7 @@
 #pragma warning(disable : 4996)
 
 void main() {
-	NetWork server(asyncW->countFunc);
+	
 	server.createServer();
 
 	int x;

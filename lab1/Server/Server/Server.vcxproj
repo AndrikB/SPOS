@@ -23,7 +23,7 @@
     <ProjectGuid>{8609DD03-ADE7-4B50-8CEF-E95E83D896E0}</ProjectGuid>
     <RootNamespace>Server</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Server</ProjectName>
+    <ProjectName>Manager</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -118,7 +118,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AsyncWorking.cpp" />
-    <ClCompile Include="Server.cpp" />
+    <ClCompile Include="Manager.cpp" />
     <ClCompile Include="NetWork.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,7 @@
 
 void main() 
 {
+	std::cout << "x= ";
 	int x;
 	std::cin >> x;
 

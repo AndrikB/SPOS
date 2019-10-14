@@ -78,7 +78,7 @@ int main() {
 	std::future<void> f=std::async(wait);
 	std::future<void> f2 = std::async(getValue);
 
-	int msgboxID = MessageBoxA(NULL, "It will be closed after 60 second", "EXIT", MB_OKCANCEL);
+	int msgboxID = MessageBoxA(NULL, "Do You want to close calculation?\nIt will be closed after 60 second", "EXIT", MB_OKCANCEL);
 	sendValue(msgboxID);
 	closeServer();
 	exit(0);

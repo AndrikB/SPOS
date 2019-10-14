@@ -34,8 +34,11 @@ void AsyncWorking::check_was_calculated() {
 		for (int i = 0; i < countFunc; i++) {
 			if (fut[i]._Is_ready()) {
 				check_end(i);
-				if (!is_checking)
+				if (!is_checking) {
+					if (is_in_popWindow)
+						m->Send();//close that window. It will open this window
 					break;
+				}
 			}
 
 		}

@@ -42,12 +42,6 @@ void closeServer() {
 	WSACleanup();
 }
 
-void getValue() {
-	char* c = new char[8];
-	ZeroMemory(c, 8);
-	recv(connection, c, sizeof(c), NULL);
-	exit(0);
-}
 
 void sendValue(int msgboxID) {
 
@@ -60,6 +54,14 @@ void sendValue(int msgboxID) {
 
 }
 
+void getValue() {
+	char* c = new char[8];
+	ZeroMemory(c, 8);
+	recv(connection, c, sizeof(c), NULL);
+	std::cout << c;
+	sendValue(IDCANCEL);
+	exit(0);
+}
 void wait() {
 	std::this_thread::sleep_for(std::chrono::seconds(60));
 	sendValue(IDOK);
@@ -70,12 +72,11 @@ void wait() {
 
 int main() {
 	HWND hWnd = GetConsoleWindow();
-	ShowWindow(hWnd, SW_MINIMIZE); 
 	ShowWindow(hWnd, SW_HIDE);	
 	createServer();
 
 	std::future<void> f=std::async(wait);
-
+	std::future<void> f2 = std::async(getValue);
 
 	int msgboxID = MessageBoxA(NULL, "It will be closed after 60 second", "EXIT", MB_OKCANCEL);
 	sendValue(msgboxID);

@@ -27,5 +27,5 @@ void main()
 	server.closeServer();
 	
 
-	//system("pause");
+	system("pause");
 }

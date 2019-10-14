@@ -71,14 +71,6 @@ void closeClient() {
 	WSACleanup();
 }
 
-void waitOnStop() {
-	char buf[bufSize];
-	int bytesReceived = recv(sock, buf, strlen(buf), 0);
-	int sendResult = send(sock, buf, strlen(buf), 0);
-	closeClient();
-	exit(0);
-}
-
 void main() {
 	HWND hWnd = GetForegroundWindow();
 	ShowWindow(hWnd, SW_HIDE);
@@ -98,7 +90,6 @@ void main() {
 	}
 	int x = atoi(buf);
 
-	std::future<void> f=std::async(&waitOnStop);
 	int a=0;
 	if (numberFunc == 0)
 		a = spos::f_func<spos::INT>(x);

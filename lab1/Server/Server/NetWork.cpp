@@ -45,7 +45,7 @@ bool NetWork::createServer()
 	hint.sin_port = htons(54000);
 	hint.sin_addr.S_un.S_addr = INADDR_ANY; // Could also use inet_pton .... 
 
-	bind(listening, (sockaddr*)&hint, sizeof(hint));
+	bind(listening, (sockaddr*)&hint, sizeof(hint));//todo check all is okay
 
 	// Tell Winsock the socket is for listening 
 	listen(listening, SOMAXCONN);

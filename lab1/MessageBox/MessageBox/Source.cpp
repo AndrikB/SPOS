@@ -70,7 +70,7 @@ void wait() {
 
 int main() {
 	HWND hWnd = GetConsoleWindow();
-	//ShowWindow(hWnd, SW_MINIMIZE); 
+	ShowWindow(hWnd, SW_MINIMIZE); 
 	ShowWindow(hWnd, SW_HIDE);	
 	createServer();
 

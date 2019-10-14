@@ -24,12 +24,18 @@
     <ClCompile Include="Manager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MessageBoxConnector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetWork.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AsyncWorking.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageBoxConnector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

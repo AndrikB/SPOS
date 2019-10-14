@@ -119,10 +119,12 @@
   <ItemGroup>
     <ClCompile Include="AsyncWorking.cpp" />
     <ClCompile Include="Manager.cpp" />
+    <ClCompile Include="MessageBoxConnector.cpp" />
     <ClCompile Include="NetWork.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AsyncWorking.h" />
+    <ClInclude Include="MessageBoxConnector.h" />
     <ClInclude Include="NetWork.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

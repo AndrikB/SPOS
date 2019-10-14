@@ -1,4 +1,5 @@
 #pragma once
+#include "MessageBoxConnector.h"
 #include <future> 
 
 
@@ -12,11 +13,13 @@ public:
 	bool wasCalculated[countFunc] = {};
 	std::future<void> fut[countFunc];
 	bool is_checking=false;
+	bool is_in_popWindow = false;
 
-	std::chrono::time_point<std::chrono::system_clock> start;
+	MessageBoxConnector* m;
 
 	void check_end(int index);
 	void check_was_calculated();
+
 	void chec_Esc();
 	void pops_new_window();
 };

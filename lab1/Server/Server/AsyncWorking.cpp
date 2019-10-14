@@ -3,6 +3,9 @@
 #include <iostream>
 #include <conio.h>
 
+#pragma warning(disable : 4996)
+
+
 #define ESC_KEY 27
 
 AsyncWorking* asyncW = new AsyncWorking();
@@ -40,11 +43,20 @@ void AsyncWorking::check_was_calculated() {
 
 }
 
+
+
 void AsyncWorking::chec_Esc()
 {
-	while (1) {
-		int c = 5;// getch();
+	while (is_checking) {
+		int c =  getch();
+		if (!is_checking)
+			return;
 		if (c == ESC_KEY) {
+			is_in_popWindow = true;			
+			ShowWindow(GetConsoleWindow(), SW_HIDE);//hide window
+
+			pops_new_window();
+
 
 		}
 	}
@@ -52,6 +64,19 @@ void AsyncWorking::chec_Esc()
 
 void AsyncWorking::pops_new_window()
 {
+	m = new MessageBoxConnector();
+
+	if (m->get()) {
+		delete m;
+		std::cout << "exit\n";
+		is_checking = false;
+		ShowWindow(GetConsoleWindow(), SW_SHOW);//show window
+	}
+	else {
+		delete m;
+		is_in_popWindow = false;
+		ShowWindow(GetConsoleWindow(), SW_SHOW);//show window
+	}
+
 
 }
-

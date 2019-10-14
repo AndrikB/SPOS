@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Client.cpp">
+    <None Include="demofuncs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Funtions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

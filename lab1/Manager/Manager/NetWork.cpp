@@ -57,7 +57,7 @@ bool NetWork::createServer()
 	int clientSize = sizeof(client);
 
 	for (int i = 0; i < countF; i++) {
-		system("start ..\\..\\Client\\Debug\\Client.exe");
+		system("start ..\\..\\Function\\Debug\\Function.exe");
 		SOCKET socket = accept(listening, (sockaddr*)&client, &clientSize);
 		clientSockets.push_back(socket);
 		itoa(i, buf, 10);

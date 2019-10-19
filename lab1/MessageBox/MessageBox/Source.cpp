@@ -63,7 +63,7 @@ void getValue() {
 	exit(0);
 }
 void wait() {
-	std::this_thread::sleep_for(std::chrono::seconds(60));
+	std::this_thread::sleep_for(std::chrono::seconds(10));
 	sendValue(IDOK);
 	closeServer();
 	exit(0);
@@ -72,11 +72,11 @@ void wait() {
 
 int main() {
 	HWND hWnd = GetConsoleWindow();
-	ShowWindow(hWnd, SW_HIDE);	
+	//ShowWindow(hWnd, SW_HIDE);	
 	createServer();
 
 	std::future<void> f=std::async(wait);
-	std::future<void> f2 = std::async(getValue);
+	//std::future<void> f2 = std::async(getValue);
 
 	int msgboxID = MessageBoxA(NULL, "Do You want to close calculation?\nIt will be closed after 60 second", "EXIT", MB_OKCANCEL);
 	sendValue(msgboxID);

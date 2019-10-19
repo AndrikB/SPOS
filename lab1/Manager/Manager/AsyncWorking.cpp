@@ -19,7 +19,7 @@ void AsyncWorking::restart()
 
 void AsyncWorking::check_end(int index) {
 	if (values[index] == 0) {
-		std::cout << "zero value becouse " << index << " func return 0\n";
+		std::cout << "zero value because " << (index==1?"f":"g") << " func return 0\n";
 		is_checking = false;
 		//close all functions
 		{
@@ -84,8 +84,12 @@ void AsyncWorking::pops_new_window()
 	is_in_popWindow = true;
 	m = new MessageBoxConnector();
 	if (m->get()) {//click exit
+		is_in_popWindow = false;
 		delete m;
-		std::cout << "exit\n";//todo write why -----------------------------------------------------------
+		std::cout << "exit because "
+			<< ((fut[0].wait_for(std::chrono::milliseconds(NULL)) == std::future_status::timeout) ? "f " : "")
+			<< ((fut[1].wait_for(std::chrono::milliseconds(NULL)) == std::future_status::timeout) ? "g " : "")
+			<< "is not calculated\n";
 		is_checking = false;
 	}
 	else {//click no exit

@@ -21,6 +21,8 @@ public:
 
 	void getAnswer(int index);
 
+	std::vector <PROCESS_INFORMATION> processesInfo;
+
 private:
 	const static int bufSize = 256;
 	char buf[bufSize];

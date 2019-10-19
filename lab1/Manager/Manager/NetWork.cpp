@@ -12,7 +12,6 @@ NetWork server(AsyncWorking::countFunc);
 
 NetWork::NetWork(int countF)
 {
-	ZeroMemory(buf, bufSize);
 	this->countF = countF;
 }
 
@@ -60,14 +59,16 @@ bool NetWork::createServer()
 	for (int i = 0; i < countF; i++) {
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi;
-
 		ZeroMemory(&si, sizeof(si));
 		si.cb = sizeof(si);
 		ZeroMemory(&pi, sizeof(pi));
-		CreateProcess(NULL, _tcsdup(TEXT("\"..\\..\\Function\\Debug\\Function\" - L - S")), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
-		//system("start ..\\..\\Function\\Debug\\Function.exe");//todo create process----------------------------------------------
+
+		CreateProcess(NULL, _tcsdup(TEXT("\"..\\..\\Function\\Debug\\Function\" - L - S")), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+		this->processesInfo.push_back(pi);
+
 		SOCKET socket = accept(listening, (sockaddr*)&client, &clientSize);
 		clientSockets.push_back(socket);
+
 		itoa(i, buf, 10);
 		send(socket, buf, strlen(buf) + 1, 0);//send number of funtcion		
 	}

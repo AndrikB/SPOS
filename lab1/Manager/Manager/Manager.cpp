@@ -8,7 +8,7 @@
 
 void main() 
 {
-	std::cout << "x= ";
+	std::cout << "x= ";//todo make few 
 	int x;
 	std::cin >> x;
 

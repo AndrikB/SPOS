@@ -35,8 +35,9 @@ void AsyncWorking::check_was_calculated() {
 			if (fut[i]._Is_ready()) {
 				check_end(i);
 				if (!is_checking) {
-					if (is_in_popWindow)
-						m->Send();//close that window. It will open this window
+					if (is_in_popWindow) {//todo change -----------------------
+						delete m;		
+					}
 					break;
 				}
 			}
@@ -51,13 +52,12 @@ void AsyncWorking::check_was_calculated() {
 void AsyncWorking::chec_Esc()
 {
 	while (is_checking) {
-		int c =  getch();
+		int c =  getch();//todo daemonize
 		if (!is_checking)
 			return;
 		if (c == ESC_KEY) {
 			is_in_popWindow = true;			
-			ShowWindow(GetConsoleWindow(), SW_HIDE);//hide window
-
+			
 			pops_new_window();
 
 
@@ -68,17 +68,15 @@ void AsyncWorking::chec_Esc()
 void AsyncWorking::pops_new_window()
 {
 	m = new MessageBoxConnector();
-
 	if (m->get()) {
 		delete m;
-		std::cout << "exit\n";
+		std::cout << "exit\n";//todo write why -----------------------------------------------------------
 		is_checking = false;
-		ShowWindow(GetConsoleWindow(), SW_SHOW);//show window
 	}
 	else {
-		delete m;
+		if (m)
+			delete m;
 		is_in_popWindow = false;
-		ShowWindow(GetConsoleWindow(), SW_SHOW);//show window
 	}
 
 

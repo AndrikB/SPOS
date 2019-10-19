@@ -2,6 +2,8 @@
 #include <winsock2.h>
 #include <iostream>
 #include <ws2tcpip.h>
+#include <tchar.h>
+
 #pragma comment(lib, "ws2_32.lib")
 #pragma warning(disable: 4996)
 
@@ -40,28 +42,15 @@ MessageBoxConnector::MessageBoxConnector()
 			exit(1);
 		}
 
-		system("start ..\\..\\MessageBox\\Debug\\MessageBox.exe");
+		
+		STARTUPINFO si;
+
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(si);
+		ZeroMemory(&pi, sizeof(pi));
+
+		CreateProcess(NULL, _tcsdup(TEXT("\"..\\..\\MessageBox\\Debug\\MessageBox\" - L - S)")), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
 		Socket = accept(sListen, (SOCKADDR*)&addr, &sizeofaddr);
-
-
-		/*{
-			char host[NI_MAXHOST];		// Client's remote name
-			char service[NI_MAXSERV];	// Service (i.e. port) the client is connect on
-
-			ZeroMemory(host, NI_MAXHOST); // same as memset(host, 0, NI_MAXHOST);
-			ZeroMemory(service, NI_MAXSERV);
-
-			if (getnameinfo((sockaddr*)&addr, sizeof(addr), host, NI_MAXHOST, service, NI_MAXSERV, 0) == 0)
-			{
-				std::cout << host << " connected on port " << service << std::endl;
-			}
-			else
-			{
-				inet_ntop(AF_INET, &addr.sin_addr, host, NI_MAXHOST);
-				std::cout << host << " connected on port " <<
-					ntohs(addr.sin_port) << std::endl;
-			}
-		}*/
 
 	
 		closesocket(sListen);
@@ -72,6 +61,9 @@ MessageBoxConnector::MessageBoxConnector()
 
 MessageBoxConnector::~MessageBoxConnector()
 {
+	TerminateProcess(pi.hProcess, 0);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
 	closesocket(Socket);
 	WSACleanup();
 }
@@ -92,7 +84,9 @@ bool MessageBoxConnector::get()
 	char* c = new char[8];
 	ZeroMemory(c, 8);
 
-	recv(Socket, c, sizeof(c), NULL);
+	int bytesReceived =recv(Socket, c, sizeof(c), NULL);
+	if (bytesReceived == SOCKET_ERROR)
+		return false;
 	if (c[0] == 'T') return true;
 	return false;
 }

@@ -10,7 +10,7 @@ public:
 	MessageBoxConnector();
 
 	SOCKET Socket;
-
+	PROCESS_INFORMATION pi;
 
 	~MessageBoxConnector();
 	void Send();

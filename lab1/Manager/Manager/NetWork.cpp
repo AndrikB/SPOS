@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
+#include <tchar.h>
 
 #pragma comment (lib, "ws2_32.lib")
 #pragma warning(disable : 4996)
@@ -57,32 +58,18 @@ bool NetWork::createServer()
 	int clientSize = sizeof(client);
 
 	for (int i = 0; i < countF; i++) {
-		system("start ..\\..\\Function\\Debug\\Function.exe");
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(si);
+		ZeroMemory(&pi, sizeof(pi));
+		CreateProcess(NULL, _tcsdup(TEXT("\"..\\..\\Function\\Debug\\Function\" - L - S")), NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi);
+		//system("start ..\\..\\Function\\Debug\\Function.exe");//todo create process----------------------------------------------
 		SOCKET socket = accept(listening, (sockaddr*)&client, &clientSize);
 		clientSockets.push_back(socket);
 		itoa(i, buf, 10);
-		send(socket, buf, strlen(buf) + 1, 0);//send number of funtcion
-		//std::cout << "connect" << std::endl;
-
-
-		/*{
-			char host[NI_MAXHOST];		// Client's remote name
-			char service[NI_MAXSERV];	// Service (i.e. port) the client is connect on
-
-			ZeroMemory(host, NI_MAXHOST); // same as memset(host, 0, NI_MAXHOST);
-			ZeroMemory(service, NI_MAXSERV);
-
-			if (getnameinfo((sockaddr*)&client, sizeof(client), host, NI_MAXHOST, service, NI_MAXSERV, 0) == 0)
-			{
-				std::cout << host << " connected on port " << service << std::endl;
-			}
-			else
-			{
-				inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
-				std::cout << host << " connected on port " <<
-					ntohs(client.sin_port) << std::endl;
-			}
-		}*/
+		send(socket, buf, strlen(buf) + 1, 0);//send number of funtcion		
 	}
 
 	// Close listening socket
@@ -128,11 +115,6 @@ void NetWork::getAnswer(int index)
 {
 	char buf[bufSize];
 	int bytesReceived = recv(clientSockets[index], buf, bufSize, 0);
-	/*if (bytesReceived == SOCKET_ERROR)
-	{
-		std::cerr << "Error in recv(). Quitting" << std::endl;
-	}*/
-	//std::cout << index << "___: " << atoi(buf) << std::endl;
 	asyncW->values[index] = atoi(buf);
 	asyncW->wasCalculated[index] = true;
 }

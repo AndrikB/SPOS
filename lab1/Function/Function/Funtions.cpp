@@ -80,23 +80,23 @@ void main() {
 	ZeroMemory(buf, bufSize);
 	int bytesReceived = recv(sock, buf, bufSize, 0);
 	int numberFunc = atoi(buf);
-	cout << "func number " << numberFunc << endl;
+	//cout << "func number " << numberFunc << endl;
 	
 
 	bytesReceived = recv(sock, buf, bufSize, 0);
 	if (bytesReceived > 0)
 	{
 		// Echo response to console
-		cout << "SERVER> " << string(buf, 0, bytesReceived) << endl;
+		//cout << "SERVER> " << string(buf, 0, bytesReceived) << endl;
 	}
 	int x = atoi(buf);
 
 	int a=0;
 	if (numberFunc == 0)
-		a = spos::f_func<spos::INT>(x);
+		a = spos::lab1::demo::f_func<spos::lab1::demo::INT>(x);
 	else if (numberFunc == 1)
-		a = spos::g_func<spos::INT>(x);
-	cout << a << endl;
+		a = spos::lab1::demo::g_func<spos::lab1::demo::INT>(x);
+	//cout << a << endl;
 	ZeroMemory(buf, bufSize);
 
 	itoa(a, buf, 10);

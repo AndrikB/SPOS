@@ -13,6 +13,13 @@ NetWork server(AsyncWorking::countFunc);
 NetWork::NetWork(int countF)
 {
 	this->countF = countF;
+	ZeroMemory(buf, bufSize);
+}
+
+void NetWork::restart()
+{
+	processesInfo.clear();
+	clientSockets.clear();
 }
 
 bool NetWork::createServer()
@@ -89,14 +96,6 @@ bool NetWork::sendToAll(int x)
 	return true;
 }
 
-bool NetWork::sendToClient(int i, char m[])
-{
-	if (asyncW->wasCalculated[i])
-		return false;
-	send(clientSockets[i], m, strlen(m) + 1, 0);
-
-	return true;
-}
 
 bool NetWork::closeServer()
 {
@@ -117,5 +116,4 @@ void NetWork::getAnswer(int index)
 	char buf[bufSize];
 	int bytesReceived = recv(clientSockets[index], buf, bufSize, 0);
 	asyncW->values[index] = atoi(buf);
-	asyncW->wasCalculated[index] = true;
 }

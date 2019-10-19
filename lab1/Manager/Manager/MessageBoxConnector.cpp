@@ -62,8 +62,8 @@ MessageBoxConnector::MessageBoxConnector()
 MessageBoxConnector::~MessageBoxConnector()
 {
 	TerminateProcess(pi.hProcess, 0);
-	CloseHandle(pi.hProcess);
-	CloseHandle(pi.hThread);
+	//CloseHandle(pi.hProcess);
+	//CloseHandle(pi.hThread);
 	closesocket(Socket);
 	WSACleanup();
 }

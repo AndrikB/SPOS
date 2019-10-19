@@ -10,12 +10,12 @@ class NetWork
 {
 public:
 	NetWork(int countF);
+	void restart();
 
 	bool createServer();
 
 	bool sendToAll(int);
 
-	bool sendToClient(int, char[]);
 
 	bool closeServer();
 

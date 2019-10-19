@@ -10,12 +10,13 @@ public:
 	const static int countFunc = 2;
 
 	int values[countFunc] = {};
-	bool wasCalculated[countFunc] = {};
 	std::future<void> fut[countFunc];
 	bool is_checking=false;
 	bool is_in_popWindow = false;
 
-	MessageBoxConnector* m;
+	MessageBoxConnector* m=nullptr;
+
+	void restart();
 
 	void check_end(int index);
 	void check_was_calculated();

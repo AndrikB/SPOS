@@ -21,15 +21,9 @@ void AsyncWorking::check_end(int index) {
 	if (values[index] == 0) {
 		std::cout << "zero value because " << (index==1?"f":"g") << " func return 0\n";
 		is_checking = false;
-		//close all functions
-		{
-			for (int i = 0; i < countFunc; i++)//close all functions no calculated
-				if (fut[i].wait_for(std::chrono::milliseconds(NULL)) == std::future_status::timeout){
-					TerminateProcess(server.processesInfo[i].hProcess, i);
-				}
-		}
-
+		server.closeProcesses();
 		return;
+
 	}
 
 	for (int i = 0; i < countFunc; i++)

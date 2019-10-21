@@ -44,7 +44,6 @@ MessageBoxConnector::MessageBoxConnector()
 
 		
 		STARTUPINFO si;
-
 		ZeroMemory(&si, sizeof(si));
 		si.cb = sizeof(si);
 		ZeroMemory(&pi, sizeof(pi));

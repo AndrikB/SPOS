@@ -21,6 +21,8 @@ public:
 
 	void getAnswer(int index);
 
+	void closeProcesses();
+
 	std::vector <PROCESS_INFORMATION> processesInfo;
 
 private:

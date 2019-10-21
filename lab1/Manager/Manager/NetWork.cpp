@@ -117,3 +117,11 @@ void NetWork::getAnswer(int index)
 	int bytesReceived = recv(clientSockets[index], buf, bufSize, 0);
 	asyncW->values[index] = atoi(buf);
 }
+
+void NetWork::closeProcesses()
+{
+	for (int i = 0; i < countF; i++)//close all functions no calculated
+		if (asyncW->fut[i].wait_for(std::chrono::milliseconds(NULL)) == std::future_status::timeout) {
+			TerminateProcess(server.processesInfo[i].hProcess, i);
+		}
+}

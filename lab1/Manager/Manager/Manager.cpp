@@ -28,6 +28,7 @@ void main()
 		std::future<void> f = std::async(&AsyncWorking::chec_Esc, asyncW);
 		asyncW->check_was_calculated();
 
+		server.closeProcesses();
 		server.closeServer();
 		
 

@@ -19,7 +19,7 @@ void AsyncWorking::restart()
 
 void AsyncWorking::check_end(int index) {
 	if (values[index] == 0) {
-		std::cout << "zero value because " << (index==1?"f":"g") << " func return 0\n";
+		std::cout << "zero value because " << (index==0?"f":"g") << " func return 0\n";
 		is_checking = false;
 		server.closeProcesses();
 		return;
@@ -42,9 +42,11 @@ void AsyncWorking::check_end(int index) {
 void AsyncWorking::check_was_calculated() {
 	is_checking = true;
 	while (is_checking) {
+
 		for (int i = 0; i < countFunc; i++) {
 			if (fut[i].wait_for(std::chrono::milliseconds(NULL))==std::future_status::ready) {
 				check_end(i);
+
 				if (!is_checking) {
 					if (is_in_popWindow) {
 						delete m;	
@@ -52,6 +54,7 @@ void AsyncWorking::check_was_calculated() {
 					}
 					break;
 				}
+
 			}
 
 		}

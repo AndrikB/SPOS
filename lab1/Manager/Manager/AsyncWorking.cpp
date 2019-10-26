@@ -15,7 +15,10 @@ void AsyncWorking::restart()
 {
 	is_checking = false;
 	is_in_popWindow = false;
-	
+	for (int i = 0; i < countFunc; i++) {
+		wasCalculated[i] = false;
+		values[i] = -1;
+	}
 }
 
 void AsyncWorking::check_end(int index) {
@@ -28,7 +31,7 @@ void AsyncWorking::check_end(int index) {
 	}
 
 	for (int i = 0; i < countFunc; i++)
-		if (fut[i].wait_for(std::chrono::milliseconds(NULL)) == std::future_status::timeout) {
+		if (!wasCalculated[i]) {
 			return;
 		}
 
@@ -56,21 +59,18 @@ void AsyncWorking::check_was_calculated() {
 					break;
 				}
 
-				
 			}
-
-
-
 		}
 
 		if (is_in_popWindow) {
 			if (time(nullptr) - timeLastMBStarted >= timeLeft) {//timeout
-				is_checking = true;
+				is_checking = false;
 				is_in_popWindow = false;
 				m->isCalculated = false;
 				m->closeServ();
 				m = nullptr;
 				timeLastMBStarted = time(nullptr);
+				
 			}
 			if (time(nullptr) - timeLastMBStarted >= UPD_TIME) {//restart
 				timeLastMBStarted += UPD_TIME;
@@ -108,8 +108,8 @@ void AsyncWorking::pops_new_window()
 		is_in_popWindow = false;
 		delete m;
 		std::cout << "exit because "
-			<< ((fut[0].wait_for(std::chrono::milliseconds(NULL)) == std::future_status::timeout) ? "f " : "")
-			<< ((fut[1].wait_for(std::chrono::milliseconds(NULL)) == std::future_status::timeout) ? "g " : "")
+			<< (!wasCalculated[0] ? "f " : "")
+			<< (!wasCalculated[1] ? "g " : "")
 			<< "is not calculated\n";
 		is_checking = false;
 	}

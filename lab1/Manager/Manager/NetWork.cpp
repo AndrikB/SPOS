@@ -115,7 +115,10 @@ void NetWork::getAnswer(int index)
 {
 	char buf[bufSize];
 	int bytesReceived = recv(clientSockets[index], buf, bufSize, 0);
-	asyncW->values[index] = atoi(buf);
+	if (bytesReceived != SOCKET_ERROR) {
+		asyncW->values[index] = atoi(buf);
+		asyncW->wasCalculated[index] = true;
+	}
 }
 
 void NetWork::closeProcesses()

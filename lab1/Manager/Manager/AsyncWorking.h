@@ -10,6 +10,7 @@ public:
 	const static int countFunc = 2;
 
 	int values[countFunc] = {};
+	bool wasCalculated[countFunc] = {};
 	std::future<void> fut[countFunc];
 	bool is_checking=false;
 	bool is_in_popWindow = false;

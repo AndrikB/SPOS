@@ -15,6 +15,8 @@ public:
 	bool is_in_popWindow = false;
 
 	MessageBoxConnector* m=nullptr;
+	time_t timeLastMBStarted;
+	int timeLeft;
 
 	void restart();
 

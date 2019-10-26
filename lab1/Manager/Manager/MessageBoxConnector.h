@@ -7,13 +7,22 @@
 class MessageBoxConnector
 {
 public:
-	MessageBoxConnector();
+	MessageBoxConnector(int time);
 
 	SOCKET Socket;
 	PROCESS_INFORMATION pi;
 
 	~MessageBoxConnector();
-	void Send();
 	bool get();
+	void restart(int time);
+	void closeServ();
+
+	bool isCalculated;
+
+private:
+	bool isRestarting = false;
+
+	void Send(int time);
+	void createServ();
 };
 

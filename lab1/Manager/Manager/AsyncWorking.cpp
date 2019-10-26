@@ -5,7 +5,8 @@
 
 #pragma warning(disable : 4996)
 
-
+#define UPD_TIME 1
+#define EXIT_TIME 10
 #define ESC_KEY 27
 
 AsyncWorking* asyncW = new AsyncWorking();
@@ -44,20 +45,41 @@ void AsyncWorking::check_was_calculated() {
 	while (is_checking) {
 
 		for (int i = 0; i < countFunc; i++) {
-			if (fut[i].wait_for(std::chrono::milliseconds(NULL))==std::future_status::ready) {
+			if (fut[i].wait_for(std::chrono::milliseconds(1))==std::future_status::ready) {
 				check_end(i);
 
-				if (!is_checking) {
-					if (is_in_popWindow) {
-						delete m;	
-						m = nullptr;
+				if (!is_checking) {//is calculated
+					if (is_in_popWindow) {//close message box
+						m->isCalculated = true;
+						m->closeServ();
 					}
 					break;
 				}
 
+				
+			}
+
+
+
+		}
+
+		if (is_in_popWindow) {
+			if (time(nullptr) - timeLastMBStarted >= timeLeft) {//timeout
+				is_checking = true;
+				is_in_popWindow = false;
+				m->isCalculated = false;
+				m->closeServ();
+				m = nullptr;
+				timeLastMBStarted = time(nullptr);
+			}
+			if (time(nullptr) - timeLastMBStarted >= UPD_TIME) {//restart
+				timeLastMBStarted += UPD_TIME;
+				timeLeft -= UPD_TIME;
+				m->restart(timeLeft);
 			}
 
 		}
+
 	}
 
 }
@@ -78,8 +100,10 @@ void AsyncWorking::chec_Esc()
 
 void AsyncWorking::pops_new_window()
 {
+	time(&timeLastMBStarted);
+	timeLeft = EXIT_TIME;
+	m = new MessageBoxConnector(timeLeft);
 	is_in_popWindow = true;
-	m = new MessageBoxConnector();
 	if (m->get()) {//click exit
 		is_in_popWindow = false;
 		delete m;
@@ -90,8 +114,7 @@ void AsyncWorking::pops_new_window()
 		is_checking = false;
 	}
 	else {//click no exit
-		if (is_checking)//it was no simulation click
-			delete m;
+		delete m;
 		is_in_popWindow = false;
 	}
 

@@ -54,13 +54,12 @@ void sendValue(int msgboxID) {
 
 }
 
-void getValue() {
+char* getValue() {
 	char* c = new char[8];
 	ZeroMemory(c, 8);
 	recv(connection, c, sizeof(c), NULL);
-	std::cout << c;
-	sendValue(IDCANCEL);
-	exit(0);
+	//std::cout << c;
+	return c;
 }
 void wait() {
 	std::this_thread::sleep_for(std::chrono::seconds(10));
@@ -71,14 +70,14 @@ void wait() {
 }
 
 int main() {
-	HWND hWnd = GetConsoleWindow();
-	//ShowWindow(hWnd, SW_HIDE);	
 	createServer();
-
-	std::future<void> f=std::async(wait);
-	//std::future<void> f2 = std::async(getValue);
-
-	int msgboxID = MessageBoxA(NULL, "Do You want to close calculation?\nIt will be closed after 60 second", "EXIT", MB_OKCANCEL);
+	char *c=getValue();
+	//std::future<void> f=std::async(wait);
+	std::string s = "Do You want to close calculation?\nIt will be closed after ";
+	s += c;
+	s += " second";
+	int msgboxID = MessageBoxA(NULL, s.c_str(), "EXIT", MB_OKCANCEL);
+	//int msgboxID = MessageBoxA(NULL, "Do You want to close calculation?\nIt will be closed after " + c + " second", "EXIT", MB_OKCANCEL);
 	sendValue(msgboxID);
 	closeServer();
 	exit(0);

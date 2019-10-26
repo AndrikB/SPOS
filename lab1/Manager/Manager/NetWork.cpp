@@ -70,7 +70,7 @@ bool NetWork::createServer()
 		si.cb = sizeof(si);
 		ZeroMemory(&pi, sizeof(pi));
 
-		CreateProcess(NULL, _tcsdup(TEXT("\"..\\..\\Function\\Debug\\Function\" - L - S")), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+		CreateProcess(NULL, _tcsdup(TEXT("\"..\\..\\Function\\Debug\\Function\"")), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
 		this->processesInfo.push_back(pi);
 
 		SOCKET socket = accept(listening, (sockaddr*)&client, &clientSize);

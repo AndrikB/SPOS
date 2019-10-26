@@ -31,7 +31,7 @@ void main()
 		server.closeProcesses();
 		server.closeServer();
 		
-
+		std::this_thread::sleep_for(std::chrono::milliseconds(1));
 		std::cout << "Press any key to continue . . .";
 		if (f.wait_for(std::chrono::microseconds(NULL)) == std::future_status::ready)
 			getch();

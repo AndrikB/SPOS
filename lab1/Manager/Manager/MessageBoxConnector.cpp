@@ -59,14 +59,7 @@ void MessageBoxConnector::restart(int time)
 
 void MessageBoxConnector::createServ()
 {
-	//downloading the library
-		//WSAStartup
-	WSAData wsaData;
-	WORD DLLVersion = MAKEWORD(2, 1);
-	if (WSAStartup(DLLVersion, &wsaData) != 0) {
-		std::cout << "Error" << std::endl;
-		exit(1);
-	}
+	
 
 	//fill in socket address information
 	SOCKADDR_IN addr;
@@ -107,5 +100,4 @@ void MessageBoxConnector::closeServ()
 {
 	TerminateProcess(pi.hProcess, 0);
 	closesocket(Socket);
-	WSACleanup();
 }

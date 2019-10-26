@@ -27,7 +27,7 @@ bool NetWork::createServer()
 	if (!clientSockets.empty()) return false;
 	/// Initialze winsock
 	WSADATA wsData;
-	WORD ver = MAKEWORD(2, 2);
+	WORD ver = MAKEWORD(2, 1);
 
 	int wsOk = WSAStartup(ver, &wsData);
 	if (wsOk != 0)

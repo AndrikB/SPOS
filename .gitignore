@@ -386,3 +386,6 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/c++,visualstudio
+*.class
+lab3/Summary-Processes
+lab3/Summary-Results

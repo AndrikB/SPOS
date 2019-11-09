@@ -60,7 +60,7 @@ void AsyncWorking::check_was_calculated() {
 				}
 
 			}
-		}
+		}//create window
 
 		if (is_in_popWindow) {
 			if (time(nullptr) - timeLastMBStarted >= timeLeft) {//timeout

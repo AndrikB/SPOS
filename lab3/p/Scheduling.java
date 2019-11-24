@@ -15,6 +15,7 @@ import p.*;
 public class Scheduling {
 
   private static int processnum = 5;
+  private static int quant =10;
   private static int meanDev = 1000;
   private static int standardDev = 100;
   private static int runtime = 1000;
@@ -25,10 +26,10 @@ public class Scheduling {
   private static void Init(String file) {
     File f = new File(file);
     String line;
-    String tmp;
     int cputime = 0;
     int ioblocking = 0;
     double X = 0.0;
+    int numberGroup=0;
 
     try {   
       BufferedReader in = new BufferedReader(new FileReader(f));
@@ -40,6 +41,12 @@ public class Scheduling {
           st.nextToken();
           processnum = Common.s2i(st.nextToken());
         }
+        if (line.startsWith("quant")) {
+          StringTokenizer st = new StringTokenizer(line);
+          st.nextToken();
+          quant = Common.s2i(st.nextToken());
+        }
+
         if (line.startsWith("meandev")) {
           StringTokenizer st = new StringTokenizer(line);
           st.nextToken();
@@ -54,13 +61,14 @@ public class Scheduling {
           StringTokenizer st = new StringTokenizer(line);
           st.nextToken();
           ioblocking = Common.s2i(st.nextToken());
+          numberGroup=Common.s2i(st.nextToken());
           X = Common.R1();
           while (X == -1.0) {
             X = Common.R1();
           }
           X = X * standardDev;
           cputime = (int) X + meanDev;
-          processVector.addElement(new sProcess(cputime, ioblocking, 0, 0, 0));          
+          processVector.addElement(new sProcess(cputime, ioblocking, 0, 0, 0, numberGroup));          
         }
         if (line.startsWith("runtime")) {
           StringTokenizer st = new StringTokenizer(line);
@@ -113,11 +121,11 @@ public class Scheduling {
           }
           X = X * standardDev;
         int cputime = (int) X + meanDev;
-        processVector.addElement(new sProcess(cputime,i*100,0,0,0));          
+        processVector.addElement(new sProcess(cputime,i*100,0,0,0, 0));          
         i++;
       }
     }
-    result = SchedulingAlgorithm.Run(runtime, processVector, result);    
+    result = SchedulingAlgorithm.Run(runtime, processVector, result, quant);    
     try {
       //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));

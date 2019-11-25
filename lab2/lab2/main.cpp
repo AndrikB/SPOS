@@ -5,68 +5,31 @@
 
 
 #define COUNT_ITEARTION 1e6
-#define TYPE true
-
-int counter = 0;
 
 
 thread_sync::DekkerLock* d = new thread_sync::DekkerLock();
+int counter = 0;
 
-volatile std::atomic_bool flag[2] = { false,false };
-//volatile bool flag[2] = {false, false};
-volatile int turn = 0;
-
-void s0() {
+void syncIncrement() {
 	for (int i = 0; i < COUNT_ITEARTION; i++)
 	{
-		flag[0] = true;
-		while (flag[1]) {
-			if (turn != 0) {
-				flag[0] = false;
-				while (turn != 0) {}
-				flag[0] = true;
-			}
-		}
+		d->lock();
 		counter++;
-		turn = 1;
-		flag[0] = false;
+		d->unlock();
 	}
 }
 
-void s1() {
-
+void unsyncIncrement() {
 	for (int i = 0; i < COUNT_ITEARTION; i++)
 	{
-		flag[1] = true;
-		while (flag[0]) {
-			if (turn != 1) {
-				flag[1] = false;
-				while (turn != 1) {}
-				flag[1] = true;
-			}
-		}
 		counter++;
-		turn = 0;
-		flag[1] = false;
 	}
 }
 
-
-
-void f() {
-	for (int i = 0; i < COUNT_ITEARTION; i++)
-	{
-		if (TYPE)
-			d->lock();
-		counter++;
-		if (TYPE)
-			d->unlock();
-	}
-}
 
 int main() {
-	std::thread first(f);
-	std::thread second(f);
+	std::thread first(syncIncrement);
+	std::thread second(syncIncrement);
 	
 	first.join();
 	second.join();

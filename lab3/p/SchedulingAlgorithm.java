@@ -4,56 +4,33 @@
 package p;
 
 import java.util.Vector;
+
+
 import java.io.*;
 import p.*;
 public class SchedulingAlgorithm {
 
-  private static boolean isComplited(sProcess process){
+  static boolean isComplited(sProcess process){
     return process.cpudone==process.cputime;
   }
   
-  private static boolean allComplited(Vector<sProcess> processVector, int blocked){
-    int size =processVector.size();
-    for(int i=0;i<size;i++){
-      if (i==blocked) continue;
-      if (!isComplited(processVector.elementAt(i)))
-        return false;
-    }
-    return true;
-  }
-
-  private static int choseNextGroup(Vector<Vector<sProcess>> groupProcess, int currentGroop){
+  private static int choseNextGroup(Vector<Group> groups, int currentGroop){
     do{
-      currentGroop=(currentGroop+1)%groupProcess.size();
-    }while(allComplited(groupProcess.elementAt(currentGroop), -1));
+      currentGroop=(currentGroop+1)%groups.size();
+    }while(groups.elementAt(currentGroop).countNotCompleted==0);
     return currentGroop;
   }
 
-  private static int choseNextProcess(Vector<sProcess> processVector,  int currentProcess, int blocked ){
-    do{
-      currentProcess=(currentProcess+1)%processVector.size();
-    }while(isComplited(processVector.elementAt(currentProcess))||currentProcess==blocked);
-    return currentProcess;
-  }
-
-  private static int countNotComplited(Vector<sProcess> processVector){
-    int count=0;
-    int size =processVector.size();
-    for(int i=0;i<size;i++){
-      if (!isComplited(processVector.elementAt(i)))
-        count++;
-    }
-    return count;
-  }
 
   public static Results Run(int runtime, Vector<sProcess> processVector, Results result, int quant) {
     int i = 0;
     int comptime = 0;
-    int currentGroup=0;
+    int currentGroup=-1;
     int size = processVector.size();//count all process
     int completed = 0;//count of completed process
     int timeLastChangeGroup=0;
     int timeLastChangeProcess=0;
+    int countNotCompleted;
     String resultsFile = "Summary-Processes";
 
     int groupSize=1;
@@ -61,91 +38,94 @@ public class SchedulingAlgorithm {
       if(groupSize<=processVector.elementAt(i).numberGroup)
       groupSize=processVector.elementAt(i).numberGroup+1;
     }
-    Vector<Vector<sProcess>> groupProcess= new Vector<Vector<sProcess>>();
-    Vector<Integer> numberProcess=new Vector<>();
+
+    Vector<Group> groups=new Vector<>();
+
     for(i=0;i<groupSize; i++){
-      groupProcess.add(new Vector<sProcess>());
-      numberProcess.add(0);
+      groups.add(new Group(new Vector<sProcess>()));
     }
     for(i=0;i<size;i++){
-      groupProcess.elementAt(processVector.elementAt(i).numberGroup).add(processVector.elementAt(i));
+      groups.elementAt(processVector.elementAt(i).numberGroup).processes.add(processVector.elementAt(i));
+      groups.elementAt(processVector.elementAt(i).numberGroup).countNotCompleted++;
     }
 
-    result.schedulingType = "Batch (Nonpreemptive)";
-    result.schedulingName = "First-Come First-Served"; 
+    result.schedulingType = "Batch (preemptive)";
+    result.schedulingName = "Fair-Share"; 
 
 
     try {
-      //BufferedWriter out = new BufferedWriter(new FileWriter(resultsFile));
-      //OutputStream out = new FileOutputStream(resultsFile);
       PrintStream out = new PrintStream(new FileOutputStream(resultsFile));
-      currentGroup=choseNextGroup(groupProcess, currentGroup);//becouse 0 group can have no one process
-      sProcess process = groupProcess.elementAt(currentGroup).elementAt(numberProcess.elementAt(currentGroup));
-      int countProcessInGroup=countNotComplited(groupProcess.elementAt(currentGroup));
-      out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup) + " registered... \t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+      currentGroup=choseNextGroup(groups, currentGroup);//becouse 0 group can have no one process
+      countNotCompleted=groups.elementAt(currentGroup).countNotCompleted;
+      sProcess process = groups.elementAt(currentGroup).getCurrentProcess();
+      out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess + " registered... \t\t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
 	  
       while (comptime < runtime) {//not timeout
 
         if (process.cpudone == process.cputime) {//is completed
           completed++;
-          out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup) + " completed... \t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+          groups.elementAt(currentGroup).countNotCompleted--;
+          out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess + " completed... \t\t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
           if (completed == size) {//all complited
             result.compuTime = comptime;
             out.close();
             return result;
           }
-          if (allComplited(groupProcess.elementAt(currentGroup),-1)){
-            currentGroup=choseNextGroup(groupProcess, currentGroup);
-            countProcessInGroup=countNotComplited(groupProcess.elementAt(currentGroup));
+          if (groups.elementAt(currentGroup).countNotCompleted==0){
+            currentGroup=choseNextGroup(groups, currentGroup);
+            countNotCompleted=groups.elementAt(currentGroup).countNotCompleted;
             timeLastChangeGroup=0;
-            timeLastChangeProcess=0;
+            timeLastChangeProcess=groups.elementAt(currentGroup).timeLastProcessWorked;
+            groups.elementAt(currentGroup).timeLastProcessWorked=0;
           }
-          else{//if process end ahead of schedule
-            numberProcess.set(currentGroup, choseNextProcess(groupProcess.elementAt(currentGroup),numberProcess.elementAt(currentGroup),-1));
-            timeLastChangeGroup=timeLastChangeGroup+(quant-timeLastChangeGroup)%(quant/countProcessInGroup);
+          else{
+            groups.elementAt(currentGroup).choseNextProcess();
           }
-          process=groupProcess.elementAt(currentGroup).elementAt(numberProcess.elementAt(currentGroup));
-          out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup) + " registered... \t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+          process = groups.elementAt(currentGroup).getCurrentProcess();
+          out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess + " started... \t\t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
         } 
     
         
         if (process.ioblocking == process.ionext) {//block process
-          out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup) + " I/O blocked...\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+          out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess + " I/O blocked...\t\t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
           process.numblocked++;//count blocking THIS process
           process.ionext = 0;
 
-          timeLastChangeProcess=0;
-          if (allComplited(groupProcess.elementAt(currentGroup),numberProcess.elementAt(currentGroup))){
-            currentGroup=choseNextGroup(groupProcess, currentGroup);
-            countProcessInGroup=countNotComplited(groupProcess.elementAt(currentGroup));
+          if (groups.elementAt(currentGroup).countNotCompleted==1){//1 is blocked
+            currentGroup=choseNextGroup(groups, currentGroup);
+            countNotCompleted=groups.elementAt(currentGroup).countNotCompleted;
             timeLastChangeGroup=0;
           }
-          else{//if process end ahead of schedule
-            numberProcess.set(currentGroup, choseNextProcess(groupProcess.elementAt(currentGroup),numberProcess.elementAt(currentGroup),numberProcess.elementAt(currentGroup)));
-            timeLastChangeGroup=timeLastChangeGroup+(quant-timeLastChangeGroup)%(quant/countProcessInGroup);
+          else{
+            groups.elementAt(currentGroup).choseNextProcess();
           }
-          process=groupProcess.elementAt(currentGroup).elementAt(numberProcess.elementAt(currentGroup));
+          timeLastChangeProcess=0;
+          process = groups.elementAt(currentGroup).getCurrentProcess();
 
-          out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup)+ " registered... \t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+          out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess+ " started... \t\t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
         }
 
-        if (timeLastChangeGroup==quant){
-          out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup)+ " stoped... \t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
-          currentGroup=choseNextGroup(groupProcess, currentGroup);
-          countProcessInGroup=countNotComplited(groupProcess.elementAt(currentGroup));
-          process=groupProcess.elementAt(currentGroup).elementAt(numberProcess.elementAt(currentGroup));
-          out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup)+ " started... \t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
-          timeLastChangeGroup=0;
+
+        if (timeLastChangeProcess==quant/countNotCompleted){
+          out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess+ " stoped,end process time(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+          groups.elementAt(currentGroup).choseNextProcess();
+          process=groups.elementAt(currentGroup).getCurrentProcess();
+          out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess+ " started... \t\t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
           timeLastChangeProcess=0;
+        }
+
+        
+        if (timeLastChangeGroup==quant){
+          out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess+ " stoped, end group time\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+          groups.elementAt(currentGroup).timeLastProcessWorked=timeLastChangeProcess%(quant/countNotCompleted);//save time
+          currentGroup=choseNextGroup(groups, currentGroup);
+          countNotCompleted=groups.elementAt(currentGroup).countNotCompleted;
+          process=groups.elementAt(currentGroup).getCurrentProcess();
+          out.println("Process: " + currentGroup+'.'+ groups.elementAt(currentGroup).currentProcess+ " started... \t\t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
+          timeLastChangeGroup=0;
+          timeLastChangeProcess=groups.elementAt(currentGroup).timeLastProcessWorked;
         }
         
-        if (timeLastChangeProcess==quant/countNotComplited(groupProcess.elementAt(currentGroup))){
-          out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup)+ " stoped... \t\t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
-          numberProcess.set(currentGroup, choseNextProcess(groupProcess.elementAt(currentGroup),numberProcess.elementAt(currentGroup),-1));
-          process=groupProcess.elementAt(currentGroup).elementAt(numberProcess.elementAt(currentGroup));
-          out.println("Process: " + currentGroup+'.'+ numberProcess.elementAt(currentGroup)+ " started... \t(" + process.cputime + " " + process.ioblocking + " " + process.cpudone + ")");
-          timeLastChangeProcess=0;
-        }
 
 
 

@@ -7,7 +7,6 @@ public class sProcess {
   public int ionext;
   public int numblocked;
   public int numberGroup;
-
   public sProcess (int cputime, int ioblocking, int cpudone, int ionext, int numblocked, int numberGroup) {
     this.cputime = cputime;
     this.ioblocking = ioblocking;

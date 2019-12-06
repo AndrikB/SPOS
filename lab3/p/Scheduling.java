@@ -80,20 +80,6 @@ public class Scheduling {
     } catch (IOException e) { /* Handle exceptions */ }
   }
 
-  private static void debug() {
-    int i = 0;
-
-    System.out.println("processnum " + processnum);
-    System.out.println("meandevm " + meanDev);
-    System.out.println("standdev " + standardDev);
-    int size = processVector.size();
-    for (i = 0; i < size; i++) {
-      sProcess process = processVector.elementAt(i);
-      System.out.println("process " + i + " " + process.cputime + " " + process.ioblocking + " " + process.cpudone + " " + process.numblocked);
-    }
-    System.out.println("runtime " + runtime);
-  }
-
   public static void main(String[] args) {
     int i = 0;
 

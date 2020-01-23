@@ -1,3 +1,5 @@
+package p;
+
 public class Common {
 
   static public long s2l ( String s ) 

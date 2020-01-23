@@ -1,3 +1,5 @@
+package p;
+
 public class Page 
 {
   public int id;

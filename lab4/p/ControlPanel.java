@@ -1,3 +1,5 @@
+package p;
+
 import java.applet.*;
 import java.awt.*;
 

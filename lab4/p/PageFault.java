@@ -54,7 +54,7 @@ public class PageFault {
 
   private static int currentPage=1;
 
-  private static int chosePageBy1Circle(Vector mem, int virtPageNum, int quant){
+  private static int chosePage(Vector mem, int virtPageNum, int quant){
     Page page;
     int countWritten=10;
     int wasChange=0;
@@ -96,14 +96,9 @@ public class PageFault {
 
   public static void replacePage ( Vector mem , int virtPageNum , int replacePageNum , ControlPanel controlPanel ) //todo add quant
   {
-    int count = 0;
     int oldestPage = -1;
-    int oldestTime = 0;
-    int firstPage = -1;
-    int map_count = 0;
-    boolean mapped = false;
 
-    oldestPage=chosePageBy1Circle(mem, virtPageNum, 100);
+    oldestPage=chosePage(mem, virtPageNum, 300);
     
     Page page = ( Page ) mem.elementAt( oldestPage );
     Page nextpage = ( Page ) mem.elementAt( replacePageNum );

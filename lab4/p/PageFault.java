@@ -94,11 +94,11 @@ public class PageFault {
   }
 
 
-  public static void replacePage ( Vector mem , int virtPageNum , int replacePageNum , ControlPanel controlPanel ) //todo add quant
+  public static void replacePage ( Vector mem , int virtPageNum , int replacePageNum , ControlPanel controlPanel, int quant)
   {
     int oldestPage = -1;
 
-    oldestPage=chosePage(mem, virtPageNum, 300);
+    oldestPage=chosePage(mem, virtPageNum, quant);
     
     Page page = ( Page ) mem.elementAt( oldestPage );
     Page nextpage = ( Page ) mem.elementAt( replacePageNum );

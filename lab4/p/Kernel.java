@@ -25,6 +25,7 @@ public class Kernel extends Thread
   public int runcycles;
   public long block = (int) Math.pow(2,12);
   public static byte addressradix = 10;
+  int quant=400;
 
   public void init( String commands , String config )  
   {
@@ -216,6 +217,15 @@ public class Kernel extends Thread
               }
             }
           }
+          if (line.startsWith("quant")) {
+            StringTokenizer st = new StringTokenizer(line);
+            while (st.hasMoreTokens()) 
+            {
+              tmp = st.nextToken();
+              quant = Common.s2i(st.nextToken());
+            }
+          }
+          
         }
         in.close();
       } catch (IOException e) { /* Handle exceptions */ }
@@ -429,7 +439,7 @@ public class Kernel extends Thread
         {
           System.out.println( "READ " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel );
+        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel, quant);
         controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
@@ -459,7 +469,7 @@ public class Kernel extends Thread
         {
            System.out.println( "WRITE " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel );          controlPanel.pageFaultValueLabel.setText( "YES" );
+        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block) , controlPanel, quant );          controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
       {

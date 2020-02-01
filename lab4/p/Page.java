@@ -8,10 +8,11 @@ public class Page
   public byte M;
   public int inMemTime;
   public int lastTouchTime;
+  public int lastModTime;
   public long high;
   public long low;
 
-  public Page( int id, int physical, byte R, byte M, int inMemTime, int lastTouchTime, long high, long low ) 
+  public Page( int id, int physical, byte R, byte M, int inMemTime, int lastTouchTime,int lastModTime, long high, long low ) 
   {
     this.id = id;
     this.physical = physical;
@@ -19,6 +20,7 @@ public class Page
     this.M = M;
     this.inMemTime = inMemTime;
     this.lastTouchTime = lastTouchTime;
+    this.lastModTime=lastModTime;
     this.high = high;
     this.low = low;
   } 	

@@ -25,7 +25,7 @@ public class Kernel extends Thread
   public int runcycles;
   public long block = (int) Math.pow(2,12);
   public static byte addressradix = 10;
-  int quant=400;
+  int tau=400;
 
   public void init( String commands , String config )  
   {
@@ -44,6 +44,7 @@ public class Kernel extends Thread
     int physical_count = 0;
     int inMemTime = 0;
     int lastTouchTime = 0;
+    int lastModTime = 0;
     int map_count = 0;
     double power = 14;
     long high = 0;
@@ -81,7 +82,7 @@ public class Kernel extends Thread
       {
         high = (block * (i + 1))-1;
         low = block * i;
-        memVector.addElement(new Page(i, -1, R, M, 0, 0, high, low));
+        memVector.addElement(new Page(i, -1, R, M, 0, 0, 0, high, low));
       }
       try 
       {
@@ -134,12 +135,19 @@ public class Kernel extends Thread
                 System.out.println("MemoryManagement: Invalid lastTouchTime in " + config);
                 System.exit(-1);
               }
+              lastModTime = Common.s2i(st.nextToken());
+              if (lastModTime < 0)
+              {
+                System.out.println("MemoryManagement: Invalid lastModTime in " + config);
+                System.exit(-1);
+              }
               Page page = (Page) memVector.elementAt(id);
               page.physical = physical;
               page.R = R;
               page.M = M;
               page.inMemTime = inMemTime;
               page.lastTouchTime = lastTouchTime;
+              page.lastModTime = lastModTime;
             }
           }
           if (line.startsWith("enable_logging")) 
@@ -217,12 +225,12 @@ public class Kernel extends Thread
               }
             }
           }
-          if (line.startsWith("quant")) {
+          if (line.startsWith("tau")) {
             StringTokenizer st = new StringTokenizer(line);
             while (st.hasMoreTokens()) 
             {
               tmp = st.nextToken();
-              quant = Common.s2i(st.nextToken());
+              tau = Common.s2i(st.nextToken());
             }
           }
           
@@ -439,7 +447,7 @@ public class Kernel extends Thread
         {
           System.out.println( "READ " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel, quant);
+        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel, tau);
         controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
@@ -469,12 +477,13 @@ public class Kernel extends Thread
         {
            System.out.println( "WRITE " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block) , controlPanel, quant );          controlPanel.pageFaultValueLabel.setText( "YES" );
+        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block) , controlPanel, tau );          controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
       {
         page.M = 1;
         page.lastTouchTime = 0;
+        page.lastModTime = 0;
         if ( doFileLog )
         {
           printLogFile( "WRITE " + Long.toString(instruct.addr , addressradix) + " ... okay" );
@@ -496,6 +505,7 @@ public class Kernel extends Thread
       {
         page.inMemTime = page.inMemTime + 10;
         page.lastTouchTime = page.lastTouchTime + 10;
+        page.lastModTime = page.lastModTime + 10;
       }
     }
     runs++;

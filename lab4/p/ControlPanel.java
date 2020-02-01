@@ -85,6 +85,7 @@ public class ControlPanel extends Frame
   Label MValueLabel = new Label("0" , Label.LEFT) ;
   Label inMemTimeValueLabel = new Label("0" , Label.LEFT) ;
   Label lastTouchTimeValueLabel = new Label("0" , Label.LEFT) ;
+  Label lastModTimeValueLabel = new Label("0", Label.LEFT);
   Label lowValueLabel = new Label("0" , Label.LEFT) ;
   Label highValueLabel = new Label("0" , Label.LEFT) ;
   Label l0 = new Label(null, Label.CENTER);
@@ -545,10 +546,13 @@ public class ControlPanel extends Frame
     lastTouchTimeValueLabel.reshape( 395,195+25,200,15 );
     add( lastTouchTimeValueLabel );
 
-    lowValueLabel.reshape( 395,210+25,230,15 );
+    lastModTimeValueLabel.reshape( 395,210+25,200,15);
+    add( lastModTimeValueLabel );
+
+    lowValueLabel.reshape( 395,225+25,230,15 );
     add( lowValueLabel );
 
-    highValueLabel.reshape( 395,225+25,230,15 );
+    highValueLabel.reshape( 395,240+25,230,15 );
     add( highValueLabel );
 
     Label virtualOneLabel = new Label( "virtual" , Label.CENTER) ;
@@ -611,12 +615,16 @@ public class ControlPanel extends Frame
     lastTouchTimeLabel.reshape(285,195+25,110,15);
     add(lastTouchTimeLabel);
 
+    Label lastModTimLabel = new Label("lastModTim: " , Label.LEFT) ;
+    lastModTimLabel.reshape(285,210+25,110,15);
+    add(lastModTimLabel);
+
     Label lowLabel = new Label("low: " , Label.LEFT) ;
-    lowLabel.reshape(285,210+25,110,15);
+    lowLabel.reshape(285,225+25,110,15);
     add(lowLabel);
 
     Label highLabel = new Label("high: " , Label.LEFT) ;
-    highLabel.reshape(285,225+25,110,15);
+    highLabel.reshape(285,240+25,110,15);
     add(highLabel);
 
     l0.reshape( 70, (2)*15+25, 60, 15 );
@@ -953,6 +961,7 @@ public class ControlPanel extends Frame
     MValueLabel.setText( Integer.toString( page.M ) );
     inMemTimeValueLabel.setText( Integer.toString( page.inMemTime ) );
     lastTouchTimeValueLabel.setText( Integer.toString( page.lastTouchTime ) );
+    lastModTimeValueLabel.setText( Integer.toString(page.lastModTime));
     lowValueLabel.setText(Long.toString( page.low , Kernel.addressradix ) );
     highValueLabel.setText(Long.toString( page.high , Kernel.addressradix ) );
   }

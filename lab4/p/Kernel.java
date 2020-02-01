@@ -242,6 +242,18 @@ public class Kernel extends Thread
     try 
     {
       DataInputStream in = new DataInputStream(new FileInputStream(f));
+      line = in.readLine();
+      if (line.equals("false")){
+        for(i=0;i<=virtPageNum;i++){
+          if (i%2==0)
+            command="READ"; 
+          else 
+            command = "WRITE";
+
+          instructVector.addElement(new Instruction(command, ((Page) memVector.elementAt(i)).low ));
+        }
+      }
+      else
       while ((line = in.readLine()) != null) 
       {
         if (line.startsWith("READ") || line.startsWith("WRITE")) 

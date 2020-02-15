@@ -17,6 +17,7 @@ public class Kernel extends Thread
   private String config_file;
   private ControlPanel controlPanel ;
   private Vector memVector = new Vector();
+  private Clock clock;
   private Vector instructVector = new Vector();
   private String status;
   private boolean doStdoutLog = false;
@@ -348,6 +349,7 @@ public class Kernel extends Thread
         }
       }
     }
+    Vector<Integer> physicalPages=new Vector<Integer>();
     for (i = 0; i < virtPageNum; i++) 
     {
       Page page = (Page) memVector.elementAt(i);
@@ -358,8 +360,10 @@ public class Kernel extends Thread
       else
       {
         controlPanel.addPhysicalPage( i , page.physical );
+        physicalPages.addElement(i);
       }
     }
+    clock=new Clock(physicalPages, memVector);
     for (i = 0; i < instructVector.size(); i++) 
     {
       high = block * virtPageNum;
@@ -459,7 +463,7 @@ public class Kernel extends Thread
         {
           System.out.println( "READ " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel, tau);
+        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block ) , controlPanel, tau, clock);
         controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
@@ -489,7 +493,7 @@ public class Kernel extends Thread
         {
            System.out.println( "WRITE " + Long.toString(instruct.addr , addressradix) + " ... page fault" );
         }
-        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block) , controlPanel, tau );          controlPanel.pageFaultValueLabel.setText( "YES" );
+        PageFault.replacePage( memVector , virtPageNum , Virtual2Physical.pageNum( instruct.addr , virtPageNum , block) , controlPanel, tau, clock );          controlPanel.pageFaultValueLabel.setText( "YES" );
       } 
       else 
       {
@@ -511,7 +515,7 @@ public class Kernel extends Thread
       Page page = ( Page ) memVector.elementAt( i );
       if ( page.R == 1 && page.lastTouchTime == 10 ) 
       {
-        page.R = 0;
+       // page.R = 0;
       }
       if ( page.physical != -1 ) 
       {

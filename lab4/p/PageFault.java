@@ -52,54 +52,52 @@ public class PageFault {
    *   simulator, and allows one to modify the current display.
    */
 
-  private static int currentPage=-1;
-  private static Vector<Integer> physicalPages=new Vector<>();
-
-  private static int lastTouchTime(Vector mem, int id ){
-    return (( Page ) mem.elementAt(physicalPages.elementAt(id))).lastTouchTime;
+  private static int lastTouchTime(Clock clock, int id ){
+    return clock.getI(id).lastTouchTime;
   }
 
-  private static int lastModTime(Vector mem, int id ){
-    return (( Page ) mem.elementAt(physicalPages.elementAt(id))).lastModTime;
-  }
 
-  private static int chosePage(Vector mem, int virtPageNum, int tau){
+  private static int chosePage(Vector mem, int virtPageNum, int tau, Clock clock){
     Page page;
     int countWritten=10;
-    int wasChange=0;
+    boolean wasChange=false;
     int oldestNoChangedPage=-1;
     int oldestChangedPage=-1;
-
-    for(int i=0;i<(1+wasChange)*physicalPages.size();i++){
-      currentPage=(currentPage+1)%physicalPages.size();
-      page = ( Page ) mem.elementAt(physicalPages.elementAt(currentPage));
-
+    int i=32;
+    //for(int i=0;i<(1+wasChange)*clock.size();i++)
+    while (i!=0){
+      i--;
+      page = clock.getNext();
       if (page.M==0){
 
         if (oldestNoChangedPage==-1)
-          oldestNoChangedPage=currentPage;
-        else if (lastTouchTime(mem,currentPage )>lastTouchTime(mem, oldestNoChangedPage))
-          oldestNoChangedPage=currentPage;
+          oldestNoChangedPage=clock.getIndex();
+        else if (lastTouchTime(clock,clock.getIndex())>lastTouchTime(clock, oldestNoChangedPage))
+          oldestNoChangedPage=clock.getIndex();
 
         if(page.lastTouchTime>=tau)
           if(page.R==1){
-            wasChange=1;
+            if (!wasChange)
+              i=i+32;
+            wasChange=true;
             page.R=0;
           }
           else {
             System.out.println(">tau. R=0");
-            return currentPage;
+            return clock.getIndex();
           }
       }
       else {
 
         if (oldestChangedPage==-1)
-          oldestChangedPage=currentPage;
-        else if (lastModTime(mem,currentPage )>lastModTime(mem, oldestChangedPage))
-          oldestChangedPage=currentPage;
+          oldestChangedPage=clock.getIndex();
+        else if (lastTouchTime(clock,clock.getIndex() )>lastTouchTime(clock, oldestChangedPage))
+          oldestChangedPage=clock.getIndex();
 
-          if(countWritten>0&&page.lastModTime>=tau & page.lastTouchTime>=tau){
-            wasChange=1;
+          if(countWritten>0&&page.lastTouchTime>=tau ){
+            if (!wasChange)
+              i=i+32;
+            wasChange=true;
             countWritten--;
             page.M=0;
             page.R=0;
@@ -107,7 +105,8 @@ public class PageFault {
         }
     }
 
-    if (wasChange==1){
+
+    if (wasChange){
       System.out.print("was change but wasnt output. error");
       return -1;
       
@@ -123,24 +122,16 @@ public class PageFault {
   }
 
 
-  public static void replacePage ( Vector mem , int virtPageNum , int replacePageNum , ControlPanel controlPanel, int tau)
+  public static void replacePage ( Vector mem , int virtPageNum , int replacePageNum , ControlPanel controlPanel, int tau, Clock clock)
   {
 
-    if (currentPage==-1){//init
-      System.out.print("tau");System.out.println(tau);
-      for(int i=0;i<mem.size();i++){
-        if ( ((Page)mem.elementAt(i)).physical!=-1)
-          physicalPages.add(((Page)mem.elementAt(i)).id);
-      }
-    }
+    int oldestPage = chosePage(mem, virtPageNum, tau, clock);
+    System.out.println(oldestPage);
+    Page page =clock.getI(oldestPage);
 
-    int oldestPage = chosePage(mem, virtPageNum, tau);
-    Page page = ( Page ) mem.elementAt( physicalPages.elementAt(oldestPage) );
-
-    System.out.print(oldestPage);System.out.print(' '); System.out.println(physicalPages.elementAt(oldestPage));
 
     Page nextpage = ( Page ) mem.elementAt( replacePageNum );
-    controlPanel.removePhysicalPage( physicalPages.elementAt(oldestPage) );
+    controlPanel.removePhysicalPage( clock.getRealIndex(oldestPage));
     nextpage.physical = page.physical;
     controlPanel.addPhysicalPage( nextpage.physical , replacePageNum );
     page.inMemTime = 0;
@@ -148,6 +139,6 @@ public class PageFault {
     page.R = 0;
     page.M = 0;
     page.physical = -1;
-    physicalPages.set(oldestPage, nextpage.id);
+    clock.set(oldestPage, nextpage.id);
   }
 }

@@ -61,19 +61,19 @@ public class PageFault {
     Page page;
     int countWritten=10;
     boolean wasChange=false;
-    int oldestNoChangedPage=-1;
-    int oldestChangedPage=-1;
+    int oldestPage=-1;
     int i=32;
     //for(int i=0;i<(1+wasChange)*clock.size();i++)
     while (i!=0){
       i--;
       page = clock.getNext();
-      if (page.M==0){
 
-        if (oldestNoChangedPage==-1)
-          oldestNoChangedPage=clock.getIndex();
-        else if (lastTouchTime(clock,clock.getIndex())>lastTouchTime(clock, oldestNoChangedPage))
-          oldestNoChangedPage=clock.getIndex();
+      if (oldestPage==-1)
+      oldestPage=clock.getIndex();
+        else if (lastTouchTime(clock,clock.getIndex())>lastTouchTime(clock, oldestPage))
+        oldestPage=clock.getIndex();
+
+      if (page.M==0){
 
         if(page.lastTouchTime>=tau)
           if(page.R==1){
@@ -88,11 +88,6 @@ public class PageFault {
           }
       }
       else {
-
-        if (oldestChangedPage==-1)
-          oldestChangedPage=clock.getIndex();
-        else if (lastTouchTime(clock,clock.getIndex() )>lastTouchTime(clock, oldestChangedPage))
-          oldestChangedPage=clock.getIndex();
 
           if(countWritten>0&&page.lastTouchTime>=tau ){
             if (!wasChange)
@@ -112,10 +107,7 @@ public class PageFault {
       
     }
     else { 
-      if (oldestNoChangedPage==-1)
-        System.out.println("oldestChangedPage");
-        else System.out.println("oldestNoChangedPage");
-      return oldestNoChangedPage==-1 ? oldestChangedPage:oldestNoChangedPage;
+      return oldestPage;
     }
     
 
